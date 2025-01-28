@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f4f7;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(90deg, #6a82fb, #fc5c7d);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-wrapper {
+            background: linear-gradient(145deg, #d0e6f5, #b3c8e0);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-wrapper input,
+        .form-wrapper button {
+            margin: 12px 0;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            outline: none;
+        }
+
+        .form-wrapper input:focus,
+        .form-wrapper button:focus {
+            border-color: #ff6f61;
+        }
+
+        .form-wrapper button {
+            background: linear-gradient(145deg, #4CAF50, #2c9b44);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-wrapper button:hover {
+            background: linear-gradient(145deg, #3b8d3c, #2c8032);
+        }
+
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            display: table;
+        }
+
+        .events-table th,
+        .events-table td {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            border-bottom: 2px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .events-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .events-table th {
+            background: grey;
+            color: black;
+        }
+
+        .actions button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            background: linear-gradient(145deg, #ffb74d, #ff9800);
+            color: white;
+            border: none;
+        }
+
+        .delete-btn {
+            background: linear-gradient(145deg, #f44336, #d32f2f);
+            color: white;
+            border: none;
+        }
+
+        .actions button:hover {
+            opacity: 0.9;
+        }
+
+        .status-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            .events-table th,
+            .events-table td {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .events-table th:nth-child(3),
+            .events-table td:nth-child(3),
+            .events-table th:nth-child(4),
+            .events-table td:nth-child(4) {
+                display: none;
+            }
+
+            .form-wrapper input,
+            .form-wrapper button {
+                padding: 10px;
+            }
+
+            .container {
+                width: 100%;
+                margin: 20px;
+                padding: 15px;
+            }
+
+            .events-table {
+                font-size: 12px;
+            }
+        }
+
+        @media screen and (max-width: 500px) {
+            .events-table th,
+            .events-table td {
+                font-size: 10px;
+                padding: 6px;
+            }
+
+            .events-table th {
+                background: #6a82fb;
+                color: white;
+            }
+
+            .events-table {
+                font-size: 10px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                display: table;
+            }
+
+            .events-table th,
+            .events-table td {
+                width: auto;
+                padding: 10px;
+                text-align: left;
+                display: table-cell;
+                border: none;
+            }
+
+            .events-table td {
+                font-size: 12px;
+            }
+
+            .actions button {
+                padding: 6px 10px;
+                font-size: 12px;
+                width: 50%;
+                margin-top: 5px;
+            }
+
+            .status-checkbox {
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+            }
+
+            .actions {
+                display: block;
+                text-align: center;
+            }
+
+            .actions button {
+                display: block;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .table-container {
+                margin-top: 20px;
+            }
+
+            .events-table td,
+            .events-table th {
+                font-size: 10px;
+                padding: 6px;
+            }
+
+            .actions button {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Event To-Do List</h1>
+        </div>
+        
+        <div class="form-wrapper">
+            <label for="activity">Activity Name:</label>
+            <input type="text" id="activity" placeholder="Enter Activity Name">
+            
+            <label for="event-date">Date:</label>
+            <input type="date" id="event-date">
+            
+            <label for="event-time">Time:</label>
+            <input type="time" id="event-time">
+            
+            <button id="add-event-btn">Add Event</button>
+        </div>
+
+        <div class="table-container">
+            <table id="event-table" class="events-table hidden">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Activity</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="event-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let eventList = [];
+        const eventTable = document.getElementById("event-table");
+        const eventListContainer = document.getElementById("event-list");
+        const addEventBtn = document.getElementById("add-event-btn");
+
+        addEventBtn.addEventListener("click", addEvent);
+
+        function addEvent() {
+            const activity = document.getElementById("activity").value;
+            const date = document.getElementById("event-date").value;
+            const time = document.getElementById("event-time").value;
+            
+            if (activity && date && time) {
+                const event = {
+                    activity,
+                    date,
+                    time,
+                    serialNumber: eventList.length + 1,
+                };
+                
+                eventList.push(event);
+                renderEventList();
+                setAlarm(event);
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        function renderEventList() {
+            eventListContainer.innerHTML = "";
+            
+            eventList.forEach((event, index) => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${event.serialNumber}</td>
+                    <td>${event.activity}</td>
+                    <td>${event.date}</td>
+                    <td>${event.time}</td>
+                    <td class="actions">
+                        <button class="edit-btn" onclick="editEvent(${index})">Edit</button>
+                        <button class="delete-btn" onclick="deleteEvent(${index})">Delete</button>
+                    </td>
+                    <td><input type="checkbox" class="status-checkbox" onclick="markAsDone(${index})"></td>
+                `;
+                
+                eventListContainer.appendChild(row);
+            });
+            
+            if (eventList.length > 0) {
+                eventTable.classList.remove("hidden");
+            } else {
+                eventTable.classList.add("hidden");
+            }
+        }
+
+        function deleteEvent(index) {
+            eventList.splice(index, 1);
+            updateSerialNumbers();
+            renderEventList();
+        }
+
+        function editEvent(index) {
+            const event = eventList[index];
+            document.getElementById("activity").value = event.activity;
+            document.getElementById("event-date").value = event.date;
+            document.getElementById("event-time").value = event.time;
+            
+            deleteEvent(index);
+        }
+
+        function markAsDone(index) {
+            eventList.splice(index, 1);
+            updateSerialNumbers();
+            renderEventList();
+        }
+
+        function updateSerialNumbers() {
+            eventList.forEach((event, index) => {
+                event.serialNumber = index + 1;
+            });
+        }
+
+        function setAlarm(event) {
+            const eventTime = new Date(`${event.date}T${event.time}:00`);
+            const alarmTime = new Date(eventTime.getTime() - 10 * 60 * 1000);
+
+            const now = new Date();
+            const timeUntilAlarm = alarmTime - now;
+
+            if (timeUntilAlarm > 0) {
+                setTimeout(() => {
+                    alert(`Reminder: ${event.activity} is starting in 10 minutes!`);
+                }, timeUntilAlarm);
+            }
+        }
+    </script>
+</body>
+</html>
